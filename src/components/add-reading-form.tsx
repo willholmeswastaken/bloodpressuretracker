@@ -30,7 +30,7 @@ export default function AddReadingForm({ onAddReading }: AddReadingFormProps) {
     onAddReading({
       systolic: Number.parseInt(systolic),
       diastolic: Number.parseInt(diastolic),
-      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     });
     setSystolic("");
     setDiastolic("");

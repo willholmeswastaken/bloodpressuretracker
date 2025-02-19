@@ -7,9 +7,18 @@ import AverageBPCategory from "./average-bp-category";
 import AddReadingForm from "./add-reading-form";
 import PreviousEntriesTable from "./previous-entries-table";
 import type { BloodPressureReading } from "@/lib/types";
+import { api } from "@/trpc/react";
 
 export default function BloodPressureDashboard() {
-  const [readings, setReadings] = useState<BloodPressureReading[]>([
+  const [readings] = api.reading.getLatest.useSuspenseQuery();
+  const utils = api.useUtils();
+  const createReading = api.reading.create.useMutation({
+    onSuccess: async () => {
+      await utils.reading.getLatest.invalidate();
+    },
+  });
+  /*
+  const [oldreadings, setReadings] = useState<BloodPressureReading[]>([
     {
       id: 1,
       systolic: 138,
@@ -47,27 +56,33 @@ export default function BloodPressureDashboard() {
       timestamp: new Date("2023-05-05T09:00:00").toISOString(),
     },
   ]);
+  */
 
-  const addReading = (newReading: Omit<BloodPressureReading, "id">) => {
-    setReadings([...readings, { ...newReading, id: readings.length + 1 }]);
+  const addReading = async (newReading: Omit<BloodPressureReading, "id">) => {
+    // todo
+    await createReading.mutateAsync(newReading);
   };
 
   const lastReading = readings[readings.length - 1];
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Blood Pressure Dashboard</h1>
         <AddReadingForm onAddReading={addReading} />
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
-        <LastReadingTile reading={lastReading} />
-        <AverageBPCategory readings={readings} />
-      </div>
-      <div className="w-full">
-        <BloodPressureChart readings={readings} />
-      </div>
-      <PreviousEntriesTable readings={readings} />
+      {lastReading && (
+        <>
+          <div className="grid gap-6 md:grid-cols-2">
+            <LastReadingTile reading={lastReading} />
+            <AverageBPCategory readings={readings} />
+          </div>
+          <div className="w-full">
+            <BloodPressureChart readings={readings} />
+          </div>
+          <PreviousEntriesTable readings={readings} />
+        </>
+      )}
     </div>
   );
 }

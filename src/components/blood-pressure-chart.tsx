@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "@/components/ui/chart";
+import { formatDateTime } from "@/lib/date-utils";
 
 interface BloodPressureChartProps {
   readings: BloodPressureReading[];
@@ -19,7 +20,7 @@ export default function BloodPressureChart({
   readings,
 }: BloodPressureChartProps) {
   const data = readings.map((reading) => ({
-    date: new Date(reading.timestamp).toLocaleDateString(),
+    date: formatDateTime(reading.createdAt),
     systolic: reading.systolic,
     diastolic: reading.diastolic,
   }));

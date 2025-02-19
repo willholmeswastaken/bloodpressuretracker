@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDateTime } from "@/lib/date-utils";
 
 interface PreviousEntriesTableProps {
   readings: BloodPressureReading[];
@@ -25,8 +26,7 @@ export default function PreviousEntriesTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Time</TableHead>
+              <TableHead>Date/Time</TableHead>
               <TableHead>Systolic</TableHead>
               <TableHead>Diastolic</TableHead>
             </TableRow>
@@ -37,12 +37,7 @@ export default function PreviousEntriesTable({
               .reverse()
               .map((reading) => (
                 <TableRow key={reading.id}>
-                  <TableCell>
-                    {new Date(reading.timestamp).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(reading.timestamp).toLocaleTimeString()}
-                  </TableCell>
+                  <TableCell>{formatDateTime(reading.createdAt)}</TableCell>
                   <TableCell>{reading.systolic}</TableCell>
                   <TableCell>{reading.diastolic}</TableCell>
                 </TableRow>
