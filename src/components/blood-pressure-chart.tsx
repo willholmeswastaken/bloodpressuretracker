@@ -9,6 +9,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  Legend,
 } from "@/components/ui/chart";
 import { formatDateTime } from "@/lib/date-utils";
 
@@ -49,12 +50,14 @@ export default function BloodPressureChart({
                 tickFormatter={(value) => `${value}`}
               />
               <Tooltip />
+              <Legend />
               <Line
                 type="monotone"
                 dataKey="systolic"
                 stroke="#8884d8"
                 strokeWidth={2}
                 dot={false}
+                name="Systolic"
               />
               <Line
                 type="monotone"
@@ -62,6 +65,7 @@ export default function BloodPressureChart({
                 stroke="#82ca9d"
                 strokeWidth={2}
                 dot={false}
+                name="Diastolic"
               />
             </LineChart>
           </ResponsiveContainer>

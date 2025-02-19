@@ -19,7 +19,7 @@ export const readingsRouter = createTRPCRouter({
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
     const latestReadings = await ctx.db.query.readings.findMany({
-      orderBy: (readings, { desc }) => [desc(readings.createdAt)],
+      orderBy: (readings, { asc }) => [asc(readings.createdAt)],
       where: eq(readings.userId, userId),
     });
 

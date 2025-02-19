@@ -8,55 +8,23 @@ import AddReadingForm from "./add-reading-form";
 import PreviousEntriesTable from "./previous-entries-table";
 import type { BloodPressureReading } from "@/lib/types";
 import { api } from "@/trpc/react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function BloodPressureDashboard() {
-  const [readings] = api.reading.getLatest.useSuspenseQuery();
   const utils = api.useUtils();
+  const { toast } = useToast();
+
+  const [readings] = api.reading.getLatest.useSuspenseQuery();
   const createReading = api.reading.create.useMutation({
     onSuccess: async () => {
       await utils.reading.getLatest.invalidate();
+      toast({
+        title: "Reading added successfully",
+        description:
+          "Your blood pressure reading has been added to the system.",
+      });
     },
   });
-  /*
-  const [oldreadings, setReadings] = useState<BloodPressureReading[]>([
-    {
-      id: 1,
-      systolic: 138,
-      diastolic: 83,
-      timestamp: new Date("2023-05-01T09:00:00").toISOString(),
-    },
-    {
-      id: 2,
-      systolic: 128,
-      diastolic: 85,
-      timestamp: new Date("2023-05-02T09:00:00").toISOString(),
-    },
-    {
-      id: 3,
-      systolic: 143,
-      diastolic: 83,
-      timestamp: new Date("2023-05-03T09:00:00").toISOString(),
-    },
-    {
-      id: 4,
-      systolic: 155,
-      diastolic: 85,
-      timestamp: new Date("2023-05-04T09:00:00").toISOString(),
-    },
-    {
-      id: 5,
-      systolic: 146,
-      diastolic: 97,
-      timestamp: new Date("2023-05-05T09:00:00").toISOString(),
-    },
-    {
-      id: 6,
-      systolic: 138,
-      diastolic: 92,
-      timestamp: new Date("2023-05-05T09:00:00").toISOString(),
-    },
-  ]);
-  */
 
   const addReading = async (newReading: Omit<BloodPressureReading, "id">) => {
     // todo
