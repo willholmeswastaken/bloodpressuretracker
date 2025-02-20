@@ -4,12 +4,19 @@ export default {
   darkMode: ["class"],
   content: ["./src/**/*.tsx"],
   safelist: [
-    "text-green-600",
-    "text-amber-500",
-    "text-amber-600",
-    "text-red-600",
+    "text-emerald-400",
+    "text-yellow-400",
+    "text-orange-400",
+    "text-rose-400",
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       colors: {
         background: "hsl(var(--background))",

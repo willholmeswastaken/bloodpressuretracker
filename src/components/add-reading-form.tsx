@@ -53,10 +53,7 @@ export default function AddReadingForm({ onAddReading }: AddReadingFormProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add New Reading
-        </Button>
+        <Button size="sm">Add New Reading</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -85,7 +82,9 @@ export default function AddReadingForm({ onAddReading }: AddReadingFormProps) {
               />
             </div>
           </div>
-          <Button type="submit">Add Reading</Button>
+          <div className="flex justify-end">
+            <Button type="submit">Save</Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

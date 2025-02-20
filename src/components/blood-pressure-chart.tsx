@@ -1,7 +1,7 @@
 "use client";
 
 import type { BloodPressureReading } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Line,
   LineChart,
@@ -27,45 +27,70 @@ export default function BloodPressureChart({
   }));
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Blood Pressure Over Time</CardTitle>
+    <Card className="w-full overflow-hidden bg-card">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="space-y-1">
+          <h3 className="text-sm font-medium">Blood Pressure Trend</h3>
+          <p className="text-xs text-muted-foreground">Last 30 days</p>
+        </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
+      <CardContent className="w-full">
+        <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
-              <XAxis
-                dataKey="date"
-                stroke="#888888"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-              />
+            <LineChart data={data} margin={{ left: -20 }}>
+              <XAxis hide />
               <YAxis
-                stroke="#888888"
+                stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(value) => `${value}`}
               />
-              <Tooltip />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload?.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-sm">
+                        <div className="flex flex-col gap-2">
+                          <div className="text-sm text-muted-foreground">
+                            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
+                            {payload[0]?.payload.date}
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="flex items-center">
+                              <div className="mr-2 h-2 w-2 rounded-full bg-primary" />
+                              <span className="text-sm font-medium">
+                                Systolic: {payload[0]?.value}
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="mr-2 h-2 w-2 rounded-full bg-secondary" />
+                              <span className="text-sm font-medium">
+                                Diastolic: {payload[1]?.value}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
               <Legend />
               <Line
                 type="monotone"
                 dataKey="systolic"
-                stroke="#8884d8"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
                 dot={false}
-                name="Systolic"
               />
               <Line
                 type="monotone"
                 dataKey="diastolic"
-                stroke="#82ca9d"
+                stroke="hsl(var(--secondary))"
                 strokeWidth={2}
                 dot={false}
-                name="Diastolic"
               />
             </LineChart>
           </ResponsiveContainer>
