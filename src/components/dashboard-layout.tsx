@@ -12,11 +12,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const menuItems = [
-  { icon: Home, label: "Dashboard", href: "#", active: true },
+  { icon: Home, label: "Dashboard", href: "/app" },
   { icon: Activity, label: "Trends", href: "#" },
-  { icon: History, label: "History", href: "#" },
+  { icon: History, label: "History", href: "/app/readings" },
 ];
 
 export default function DashboardLayout({
@@ -25,11 +27,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   const Sidebar = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <div
-      className={`${isMobile ? "w-full" : "w-16"} flex h-full flex-col bg-background`}
-    >
+    <div className={`${isMobile ? "w-full" : "w-16"} flex h-full flex-col bg-background`}>
       <div className="p-4">
         <h2 className={`text-lg font-semibold ${!isMobile && "sr-only"}`}>
           BP Monitor
@@ -43,15 +44,20 @@ export default function DashboardLayout({
       <nav className="flex-1 px-2">
         <TooltipProvider delayDuration={0}>
           {menuItems.map((item) => {
+            const isActive = pathname === item.href;
             const NavItem = (
-              <a
+              <Link
                 key={item.label}
                 href={item.href}
-                className={`my-1 flex items-center rounded-md text-sm transition-colors ${!isMobile ? "h-10 w-10 justify-center" : "px-4 py-2"} ${item.active ? "bg-white text-black" : "hover:bg-accent hover:text-accent-foreground"}`}
+                className={`my-1 flex items-center rounded-md text-sm transition-colors ${
+                  !isMobile ? "h-10 w-10 justify-center" : "px-4 py-2"
+                } ${
+                  isActive ? "bg-white text-black" : "hover:bg-accent hover:text-accent-foreground"
+                }`}
               >
                 <item.icon className={`h-5 w-5 ${isMobile && "mr-3"}`} />
                 {isMobile && item.label}
-              </a>
+              </Link>
             );
 
             return isMobile ? (
