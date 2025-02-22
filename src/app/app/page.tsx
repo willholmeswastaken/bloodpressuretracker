@@ -1,7 +1,8 @@
 import BloodPressureDashboard from "@/components/blood-pressure-dashboard";
 import { api } from "@/trpc/server";
 
-export default function DashboardPage() {
-  void api.reading.getLatest.prefetch();
-  return <BloodPressureDashboard />;
+export default async function DashboardPage() {
+  const latestReadings = await api.reading.getLatest();
+
+  return <BloodPressureDashboard latestReadings={latestReadings} />;
 }

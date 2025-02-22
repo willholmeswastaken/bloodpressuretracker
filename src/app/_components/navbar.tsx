@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function Navbar() {
   return (
@@ -21,7 +28,19 @@ export default function Navbar() {
               <span className="sr-only">GitHub</span>
             </Button>
           </Link>
-          <Button size="sm">Sign in</Button>
+          <SignedOut>
+            <SignInButton forceRedirectUrl="/app">
+              <Button variant="outline" size="sm">
+                Sign in
+              </Button>
+            </SignInButton>
+            <SignUpButton forceRedirectUrl="/app">
+              <Button size="sm">Sign up</Button>
+            </SignUpButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </div>
     </header>

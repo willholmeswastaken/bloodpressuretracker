@@ -1,33 +1,33 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { readings } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
-
-const userId = "test";
+import type { BloodPressureReading } from "@/lib/types";
 
 export const readingsRouter = createTRPCRouter({
-  create: publicProcedure
+  create: protectedProcedure
     .input(z.object({ systolic: z.number(), diastolic: z.number() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.insert(readings).values({
         systolic: input.systolic,
         diastolic: input.diastolic,
-        userId,
+        userId: ctx.auth.userId,
       });
     }),
 
-  getLatest: publicProcedure.query(async ({ ctx }) => {
+  getLatest: protectedProcedure.query(async ({ ctx }) => {
     const latestReadings = await ctx.db.query.readings.findMany({
       orderBy: (readings, { asc }) => [asc(readings.createdAt)],
-      where: eq(readings.userId, userId),
+      where: eq(readings.userId, ctx.auth.userId),
     });
 
-    return (
+    const res: BloodPressureReading[] =
       latestReadings.map((reading) => ({
         ...reading,
         createdAt: reading.createdAt.toISOString(),
-      })) ?? []
-    );
+      })) ?? [];
+
+    return res;
   }),
 });

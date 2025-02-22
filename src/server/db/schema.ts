@@ -22,8 +22,6 @@ export const createTable = pgTableCreator(
 
 export const users = createTable("users", {
   userId: varchar("user_id", { length: 256 }).primaryKey(),
-  name: varchar("name", { length: 256 }),
-  email: varchar("email", { length: 256 }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

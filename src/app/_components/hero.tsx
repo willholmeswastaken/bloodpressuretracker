@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -19,14 +20,16 @@ export default function Hero() {
           </p>
         </div>
         <div className="flex gap-4">
-          <Button size="lg">
-            Get Started
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/app">
+            <Button size="lg">
+              Get Started
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
 
-      <div className="relative w-full max-w-6xl rounded-lg border bg-background/50 shadow-xl">
+      <div className="relative w-full max-w-6xl rounded-lg border bg-background/50 shadow-xl duration-700 animate-in fade-in-0">
         <Image
           src="/app.png"
           alt="Blood Pressure Pulse Dashboard Preview"

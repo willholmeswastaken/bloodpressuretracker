@@ -10,12 +10,23 @@ import { useToast } from "@/hooks/use-toast";
 import { Activity } from "lucide-react";
 import { PlusCircle, Target, History } from "lucide-react";
 import { Card, CardHeader } from "./ui/card";
+import { useUser } from "@clerk/nextjs";
 
-export default function BloodPressureDashboard() {
+type BloodPressureDashboardProps = {
+  latestReadings: BloodPressureReading[];
+};
+
+export default function BloodPressureDashboard({
+  latestReadings,
+}: BloodPressureDashboardProps) {
   const utils = api.useUtils();
   const { toast } = useToast();
+  const { user } = useUser();
 
-  const [readings] = api.reading.getLatest.useSuspenseQuery();
+  const { data: readings } = api.reading.getLatest.useQuery(undefined, {
+    initialData: latestReadings,
+  });
+
   const createReading = api.reading.create.useMutation({
     onSuccess: async () => {
       await utils.reading.getLatest.invalidate();
@@ -64,7 +75,9 @@ export default function BloodPressureDashboard() {
     <div className="space-y-6 sm:space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div className="mb-4 sm:mb-0">
-          <h1 className="text-2xl font-bold sm:text-3xl">Welcome, Will</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">
+            Welcome, {user?.firstName}
+          </h1>
           <p className="pl-1 text-muted-foreground">
             Overview of your blood pressure readings
           </p>
@@ -73,7 +86,7 @@ export default function BloodPressureDashboard() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <LastReadingTile reading={lastReading!} />
+        <LastReadingTile reading={lastReading} />
         <AverageBPCategory readings={readings} />
       </div>
 

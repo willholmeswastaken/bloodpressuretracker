@@ -1,11 +1,4 @@
-import {
-  Brain,
-  ChartLine,
-  CircleDollarSignIcon,
-  Cloud,
-  Shield,
-  Zap,
-} from "lucide-react";
+import { Brain, ChartLine, CircleDollarSignIcon, Zap } from "lucide-react";
 
 const features = [
   {
@@ -49,7 +42,7 @@ export default function Features() {
         {features.map((feature) => (
           <div
             key={feature.name}
-            className="relative overflow-hidden rounded-lg border bg-background p-8"
+            className="relative overflow-hidden rounded-lg border bg-background p-8 transition-all duration-300 before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-r before:from-blue-500/10 before:to-purple-500/10 before:opacity-0 before:transition-opacity hover:border-blue-500/50 hover:shadow-[0_0_25px_rgba(0,0,0,0.3)] hover:before:opacity-100"
           >
             <div className="flex items-center gap-4">
               <feature.icon className="h-8 w-8" />

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun, Search, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import { CommandMenu } from "./command-menu";
+import { UserButton } from "@clerk/nextjs";
 
 export function TopBar({ children }: { children?: React.ReactNode }) {
   const { theme, setTheme } = useTheme();
@@ -38,10 +39,7 @@ export function TopBar({ children }: { children?: React.ReactNode }) {
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             <span className="sr-only">Toggle theme</span>
           </Button>
-          <Button variant="ghost" size="icon">
-            <User className="h-5 w-5" />
-            <span className="sr-only">User menu</span>
-          </Button>
+          <UserButton />
         </div>
       </div>
       <CommandMenu />

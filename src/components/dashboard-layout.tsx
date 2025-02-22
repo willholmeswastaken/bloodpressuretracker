@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home, Activity, Settings, LogOut, History, Menu } from "lucide-react";
+import { Home, Activity, LogOut, History, Menu } from "lucide-react";
 import { TopBar } from "./top-bar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {

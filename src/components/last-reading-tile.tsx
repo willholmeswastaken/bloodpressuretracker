@@ -5,19 +5,18 @@ import { Progress } from "@/components/ui/progress";
 import { formatDateTime } from "@/lib/date-utils";
 
 interface LastReadingTileProps {
-  reading: BloodPressureReading;
+  reading?: BloodPressureReading;
 }
 
 export default function LastReadingTile({ reading }: LastReadingTileProps) {
-  const { category, color } = getBPCategory(
-    reading.systolic,
-    reading.diastolic,
-  );
+  const systolic = reading?.systolic ?? 0;
+  const diastolic = reading?.diastolic ?? 0;
+  const { category, color } = getBPCategory(systolic, diastolic);
   const maxSystolic = 180; // Maximum expected systolic value
   const maxDiastolic = 120; // Maximum expected diastolic value
 
-  const systolicProgress = (reading.systolic / maxSystolic) * 100;
-  const diastolicProgress = (reading.diastolic / maxDiastolic) * 100;
+  const systolicProgress = (systolic / maxSystolic) * 100;
+  const diastolicProgress = (diastolic / maxDiastolic) * 100;
 
   return (
     <Card className="bg-card">
@@ -25,11 +24,11 @@ export default function LastReadingTile({ reading }: LastReadingTileProps) {
         <div className="space-y-1">
           <h3 className="text-sm font-medium">Last Reading</h3>
           <p className="text-xs text-muted-foreground">
-            {formatDateTime(reading.createdAt)}
+            {formatDateTime(reading?.createdAt ?? new Date())}
           </p>
         </div>
         <div className={`text-2xl font-bold ${color}`}>
-          {reading.systolic}/{reading.diastolic}
+          {systolic}/{diastolic}
         </div>
       </CardHeader>
       <CardContent>
@@ -37,14 +36,14 @@ export default function LastReadingTile({ reading }: LastReadingTileProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span>Systolic</span>
-              <span className={color}>{reading.systolic} mmHg</span>
+              <span className={color}>{systolic} mmHg</span>
             </div>
             <Progress value={systolicProgress} className="h-2" />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span>Diastolic</span>
-              <span className={color}>{reading.diastolic} mmHg</span>
+              <span className={color}>{diastolic} mmHg</span>
             </div>
             <Progress value={diastolicProgress} className="h-2" />
           </div>
