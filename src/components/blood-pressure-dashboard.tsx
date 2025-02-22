@@ -6,7 +6,6 @@ import AverageBPCategory from "./average-bp-category";
 import AddReadingForm from "./add-reading-form";
 import type { BloodPressureReading } from "@/lib/types";
 import { api } from "@/trpc/react";
-import { useToast } from "@/hooks/use-toast";
 import { Activity } from "lucide-react";
 import { PlusCircle, Target, History } from "lucide-react";
 import { Card, CardHeader } from "./ui/card";
@@ -19,29 +18,11 @@ type BloodPressureDashboardProps = {
 export default function BloodPressureDashboard({
   latestReadings,
 }: BloodPressureDashboardProps) {
-  const utils = api.useUtils();
-  const { toast } = useToast();
   const { user } = useUser();
 
   const { data: readings } = api.reading.getLatest.useQuery(undefined, {
     initialData: latestReadings,
   });
-
-  const createReading = api.reading.create.useMutation({
-    onSuccess: async () => {
-      await utils.reading.getLatest.invalidate();
-      toast({
-        title: "Reading added successfully",
-        description:
-          "Your blood pressure reading has been added to the system.",
-      });
-    },
-  });
-
-  const addReading = async (newReading: Omit<BloodPressureReading, "id">) => {
-    // todo
-    await createReading.mutateAsync(newReading);
-  };
 
   const lastReading = readings[readings.length - 1];
 
@@ -82,7 +63,7 @@ export default function BloodPressureDashboard({
             Overview of your blood pressure readings
           </p>
         </div>
-        <AddReadingForm onAddReading={addReading} />
+        <AddReadingForm />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

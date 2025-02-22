@@ -1,8 +1,5 @@
 "use client";
 
-import type React from "react";
-
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,87 +9,103 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
 import { useToast } from "@/hooks/use-toast";
+import { type BloodPressureReading } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 
-export default function AddReadingForm() {
-  const [open, setOpen] = useState(false);
+type EditReadingFormProps = {
+  reading: BloodPressureReading | null;
+  onClose: () => void;
+};
+
+export function EditReadingForm({ reading, onClose }: EditReadingFormProps) {
   const { toast } = useToast();
   const utils = api.useUtils();
-  const createReading = api.reading.create.useMutation({
+
+  const updateReading = api.reading.update.useMutation({
     onSuccess: async () => {
-      setOpen(false);
       await utils.reading.getLatest.invalidate();
       toast({
-        title: "Reading added successfully",
-        description:
-          "Your blood pressure reading has been added to the system.",
+        title: "Reading updated",
+        description: "Your blood pressure reading has been updated.",
       });
+      onClose();
     },
   });
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "b") {
-        event.preventDefault();
-        event.stopPropagation();
-        setOpen(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown, { capture: true });
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!reading) return;
+
     const formData = new FormData(e.currentTarget);
     const date = formData.get("date") as string;
 
-    createReading.mutate({
+    await updateReading.mutateAsync({
+      id: reading.id,
       systolic: Number(formData.get("systolic")),
       diastolic: Number(formData.get("diastolic")),
       pulse: Number(formData.get("pulse")) ?? 0,
-      createdAt: date ? new Date(date).toISOString() : new Date().toISOString(),
+      createdAt: date ? new Date(date).toISOString() : reading.createdAt,
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm">Add New Reading</Button>
-      </DialogTrigger>
+    <Dialog open={!!reading} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Reading</DialogTitle>
+          <DialogTitle>Edit Reading</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="systolic">Systolic (mmHg)</Label>
-                <Input id="systolic" name="systolic" type="number" required />
+                <Input
+                  id="systolic"
+                  name="systolic"
+                  type="number"
+                  defaultValue={reading?.systolic}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="diastolic">Diastolic (mmHg)</Label>
-                <Input id="diastolic" name="diastolic" type="number" required />
+                <Input
+                  id="diastolic"
+                  name="diastolic"
+                  type="number"
+                  defaultValue={reading?.diastolic}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="pulse">Pulse</Label>
-                <Input id="pulse" name="pulse" type="number" />
+                <Input
+                  id="pulse"
+                  name="pulse"
+                  type="number"
+                  defaultValue={reading?.pulse}
+                />
               </div>
               <div className="space-y-2">
                 <Label>Date Recorded</Label>
-                <DatePicker name="date" />
+                <DatePicker
+                  name="date"
+                  defaultDate={
+                    new Date(reading?.createdAt ?? new Date().toISOString())
+                  }
+                />
               </div>
             </div>
           </div>
-          <div className="flex justify-end">
-            <Button type="submit" disabled={createReading.isPending}>
-              {createReading.isPending && (
+          <div className="flex justify-end space-x-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={updateReading.isPending}>
+              {updateReading.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               Save
