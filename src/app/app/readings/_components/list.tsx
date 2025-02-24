@@ -4,7 +4,7 @@ import { useState } from "react";
 import { api } from "@/trpc/react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { Loader2, MoreVertical } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -24,6 +24,12 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { EditReadingForm } from "@/components/edit-reading-form";
 import type { BloodPressureReading } from "@/lib/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Props = {
   latestReadings: BloodPressureReading[];
@@ -83,22 +89,26 @@ export function ReadingsList({ latestReadings }: Props) {
                   <p className="text-sm text-muted-foreground">Pulse</p>
                   <p>{reading.pulse} bpm</p>
                 </div>
-                <div className="space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setEditingReading(reading)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setReadingToDelete(reading.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => setEditingReading(reading)}
+                    >
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onClick={() => setReadingToDelete(reading.id)}
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </CardContent>
           </Card>
